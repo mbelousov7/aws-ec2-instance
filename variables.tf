@@ -1,3 +1,28 @@
+variable "labels" {
+  type = object({
+    prefix    = string
+    stack     = string
+    component = string
+    env       = string
+  })
+  description = "Minimum required map of labels(tags) for creating aws resources"
+}
+
+variable "tags" {
+  type        = map(string)
+  description = "Additional tags"
+  default     = {}
+}
+
+variable "instance_name" {
+  type        = string
+  description = <<-EOT
+      optionally define a custom value for the instance name parameter.
+      By default, it is defined as a construction from var.labels
+    EOT
+  default     = "default"
+}
+
 variable "ami" {
   type        = string
   description = "The AMI to use for the instance. By default it is the AMI provided by Amazon with Ubuntu 16.04"
@@ -31,11 +56,4 @@ variable "availability_zone" {
   type        = string
   description = "Availability Zone the instance is launched in. If not set, will be launched in the first AZ of the region"
   default     = ""
-}
-
-
-
-variable "tags" {
-  type    = map(string)
-  default = {}
 }

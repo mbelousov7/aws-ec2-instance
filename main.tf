@@ -1,5 +1,8 @@
 locals {
   ami = var.ami != "" ? var.ami : join("", data.aws_ami.default.*.image_id)
+  instance_name = var.instance_name == "default" ? (
+    "${var.labels.prefix}-${var.labels.stack}-${var.labels.component}-instance-${var.labels.env}"
+  ) : var.instance_name
 }
 
 data "aws_ami" "default" {
@@ -27,10 +30,11 @@ resource "aws_instance" "default" {
 
   subnet_id                   = var.subnet
   associate_public_ip_address = var.associate_public_ip_address
-  security_groups             = var.security_groups
+  vpc_security_group_ids      = var.security_groups
 
   tags = merge(
+    var.labels,
     var.tags,
-    { Name = "${var.tags.prefix}-${var.tags.env}-${var.tags.component}-ec2" }
+    { Name = local.instance_name },
   )
 }
